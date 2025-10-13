@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from datetime import datetime, timedelta
+import random
 
 app = FastAPI()
 app.add_middleware(
@@ -10,17 +11,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class Dates(BaseModel):
-    start_date: str
-    end_date: str
+@app.get("/data")
+async def get_data(start: str, end: str):
+    start_date = datetime.strptime(start, "%Y-%m-%d")
+    end_date = datetime.strptime(end, "%Y-%m-%d")
+    days = (end_date - start_date).days + 1
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+    data = [
+        {"date": (start_date + timedelta(days=i)).strftime("%Y-%m-%d"), "value": random.randint(10, 100)} for i in range(days)
+    ]
 
-
-@app.post("/date")
-def date(dates: Dates):
-    result = f"From Server: {dates.start_date} ~ {dates.end_date}"
-    return {"result": result}
-
+    return {"data": data}
