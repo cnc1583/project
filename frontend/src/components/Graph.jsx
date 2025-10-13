@@ -5,8 +5,6 @@ function Graph({ data }) {
         return <p>No Data</p>;
     }
 
-    console.log(data);
-
     return (
         <div className="graph">
             <h2>Graph</h2>
