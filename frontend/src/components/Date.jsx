@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 function Date({ onDateChange }) {
     const [start_date, setStart_date] = useState("");
     const [end_date, setEnd_date] = useState("");
+    //const [monthly, setMonthly] = useState(false)
 
     useEffect(() => {
         if (start_date && end_date) {
-            onDateChange({ start_date, end_date });
+            onDateChange({start_date, end_date});
         }
-    }, [start_date, end_date]);
+    }, [start_date, end_date, onDateChange]);
+
 
     return (
         <div id="set_date">

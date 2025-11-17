@@ -1,28 +1,50 @@
-import {LineChart, XAxis, YAxis, Tooltip, Line, ResponsiveContainer, CartesianGrid, Legend} from 'recharts';
+import {ResponsiveContainer, Bar, XAxis, YAxis, Tooltip, Legend, ComposedChart, Line} from 'recharts';
 
-function Graph({ data }) {
-    if(!data || data.length == 0) {
+function Graph({ data, graphType: graphType }) {
+    if(!data || data.length === 0) {
         return <p>No Data</p>;
     }
 
+    console.log(data);
+
+    let yAxisLabel = (graphType === "stock") ? "주가" : "평당 가격";
+
     return (
-        <div className="graph">
+        <div className="graph" style={{ margin: '100px'}}>
             <h2>Graph</h2>
             <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3"/>
+                <ComposedChart data={data}>
                     <XAxis dataKey="date"/>
-                    <YAxis/>
+                    <YAxis
+                        yAxisId="left"
+                        label={{value: "검색량", angle:-90, position:"insideLeft"}}
+                    />
+
+                    <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        label={{value: yAxisLabel, angle:90, position:"insideRight"}}
+                    />
                     <Tooltip/>
                     <Legend/>
-                    <Line
-                        type="monotone"
+                    <Bar
+                        yAsisId="left"
                         dataKey="value"
-                        stroke="#2563eb"
-                        strokeWidth={2}
-                        activeDot={{ r: 6}}
+                        name="검색량"
+                        fill="#2563eb"
+                        barSize={20}
                     />
-                </LineChart>
+
+                    <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="price"
+                        name={yAxisLabel}
+                        stroke="#dc2626"
+                        strokeWidth={2}
+                        dot={false}
+                    />
+                </ComposedChart>
             </ResponsiveContainer>
         </div>
     )

@@ -1,0 +1,80 @@
+/* NewsToggleSwitch.css */
+.news-toggle-switch {
+    position: relative;
+    width: 100px;
+    display: inline-block;
+    user-select: none;
+}
+
+.news-toggle-input {
+    display: none;
+}
+
+.news-toggle-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    background-color: #ccc;
+    transition: background-color 0.3s;
+    height: 30px;
+    position: relative;
+}
+
+.news-toggle-inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s;
+}
+
+.news-toggle-inner::before,
+.news-toggle-inner::after {
+    display: block;
+    float: left;
+    width: 50%;
+    height: 30px;
+    padding: 0;
+    line-height: 30px;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.news-toggle-inner::before {
+    content: "뉴스";
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+}
+
+.news-toggle-inner::after {
+    content: "그래프";
+    background-color: #2196f3;
+    text-align: center;
+}
+
+.news-toggle-switcher {
+    display: block;
+    width: 22px;
+    height: 23px;
+    margin: 1px;
+    background: white;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 68px;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    transition: all 0.3s;
+}
+
+.news-toggle-input:checked + .news-toggle-label .news-toggle-inner {
+    margin-left: 0;
+}
+
+.news-toggle-input:checked + .news-toggle-label .news-toggle-switcher {
+    right: 0;
+}
