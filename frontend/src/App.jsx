@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {Routes, Route, Link} from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 import dayjs from "dayjs"
 
 import HomePage from "./pages/HomePage";
@@ -12,6 +12,7 @@ function App() {
     const [endDate, setEndDate] = useState("");
     const [graphType, setGraphType] = useState("stock")
     const [newsType, setNewsType] = useState("graph")
+    const [loading, setLoading] = useState(false);
 
     const handle_dates_change = async ({ start_date, end_date }) => {
         if (!(start_date && end_date)) return;
@@ -48,6 +49,7 @@ function App() {
 
         const fetchAll = async() => {
             try {
+                setLoading(true);
 
                 const trendUrl = `http://127.0.0.1:8000/trend?start=${startDate}&end=${endDate}&keyword=${encodeURIComponent(selectedKeyword)}`
                 let priceUrl = ""
@@ -77,6 +79,8 @@ function App() {
             } catch (err) {
                 console.error(err);
                 setWarning("Data Error");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -85,10 +89,6 @@ function App() {
 
     return (
         <div>
-            <nav style={{padding: "12px", marginBottom: "16px", borderBottom: "1px solid #ddd"}}>
-                <Link to="/" style={{marginRight: "12px"}}>홈</Link>
-            </nav>
-
             <Routes>
                 <Route
                     path="/"
@@ -105,6 +105,7 @@ function App() {
                             handle_dates_change={handle_dates_change}
                             handleSubjectToggle={handleSubjectToggle}
                             handleNewsToggle={handleNewsToggle}
+                            loading={loading}
                         />
                     }
                 />
@@ -114,17 +115,42 @@ function App() {
 }
 
 function mergeWith(trendData, stockData) {
-    const stockMap = new Map(stockData.map(s => [s.date, s.price]));
-    let lastPrice = null;
+    const stockMap = new Map(stockData.map(s => [
+        s.date,
+        {
+            price: s.price,
+            vol: s.vol,
+            hgpr: s.hgpr,
+            lwpr: s.lwpr,
+            sign: s.sign
+        }
+        ]));
+    let last = {
+        price: null,
+        vol: null,
+        hgpr: null,
+        lwpr: null,
+        sign: null
+    };
 
     return trendData.map(t => {
         const date = t.date;
-        if(stockMap.has(date)) lastPrice = stockMap.get(date);
+
+        const day = new Date(date).getDay();
+        const isWeekend = (day === 0 || day === 6);
+        const hasDate = stockMap.has(date);
+        if(hasDate) {
+            last = stockMap.get(date);
+        }
 
         return {
             date,
             value: t.value,
-            price: lastPrice
+            price: last.price,
+            vol: (isWeekend || !hasDate) ? 0 : last.vol,
+            hgpr: last.hgpr,
+            lwpr: last.lwpr,
+            sign: last.sign
         }
     })
 }

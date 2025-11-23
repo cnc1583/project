@@ -1,9 +1,10 @@
 import Date from "../components/Date.jsx";
 import Graph from "../components/Graph.jsx";
-import Dashboard, {keywordsList} from "../components/Dashboard";
+import Dashboard from "../components/Dashboard";
 import NEWS_DATA from "../components/News";
-import SubjectToggleSwitch from "../components/SubjectToggleSwitch";
-import NewsToggleSwitch from "../components/NewsToggleSwitch";
+import LoadingSpinner from "../components/LoadingSpinner";
+
+import "./HomePage.css"
 
 export default function HomePage({
     selectedKeyword,
@@ -16,45 +17,54 @@ export default function HomePage({
     newsType,
     handle_dates_change,
     handleSubjectToggle,
-    handleNewsToggle
+    handleNewsToggle,
+    loading
 }) {
 
     return (
         <div>
-            <h1>데이터 시각화</h1>
+            <div className="home-layout">
 
-            <Date onDateChange={handle_dates_change} />
+                <div className="home-sidebar">
+                    <Dashboard
+                        selectedKeyword={selectedKeyword}
+                        onKeywordSelect={setSelectedKeyword}
+                        graphType={graphType}
+                        newsType={newsType}
+                        handleSubjectToggle={handleSubjectToggle}
+                        handleNewsToggle={handleNewsToggle}
+                    />
+                </div>
 
-            <SubjectToggleSwitch graphType={graphType} onToggle={handleSubjectToggle}/>
+                <div className="home-content">
+                    <div className="homepage-header">
+                        <h1 className="homepage-title">CSE 9</h1>
+                        <Date onDateChange={handle_dates_change} />
+                    </div>
 
-            <NewsToggleSwitch newsType={newsType} onToggle={handleNewsToggle}/>
-
-            {newsType === "news" ?
-            (
-            <div>
-                <h2>관련 뉴스</h2>
-                <ul>
-                    {NEWS_DATA.filter(n =>
-                        n.date >= startDate &&
-                        n.date <= endDate &&
-                        n.subject === graphType).map((n, idx) => (
-                            <li key={idx}>
-                                <a href={n.url} target="_blank" rel="noreferrer">{n.title}</a>
-                            </li>
-                    ))}
-                </ul>
+                    {loading ? (
+                        <LoadingSpinner height={graphType === "stock" ? 660 : 660}/>
+                    ) : newsType === "news" ?
+                    (
+                    <div className="news-section">
+                        <h2>관련 뉴스</h2>
+                        <ul>
+                            {NEWS_DATA.filter(n =>
+                                n.date >= startDate &&
+                                n.date <= endDate &&
+                                n.subject === graphType).map((n, idx) => (
+                                    <li key={idx}>
+                                        <a href={n.url} target="_blank" rel="noreferrer">{n.title}</a>
+                                    </li>
+                            ))}
+                        </ul>
+                    </div>
+                    )
+                    : warning ? <p>{warning}</p> :
+                    (<Graph data={data} graphType={graphType} />)
+                    }
+                </div>
             </div>
-            )
-            : warning ? <p>{warning}</p> :
-            (<Graph data={data} graphType={graphType} />)
-            }
-
-            <Dashboard
-                selectedKeyword={selectedKeyword}
-                onKeywordSelect={setSelectedKeyword}
-                graphType={graphType}
-            />
-
         </div>
     );
 }
