@@ -2,7 +2,7 @@ import requests
 import time
 import redis
 import json
-from back.core.kis_config import kis_settings
+from back.infrastructure.config.kis_config import kis_settings
 
 redis_client = redis.Redis(host="localhost", port=6379, db=0)
 TOKEN_KEY = "kis_access_token"

@@ -1,10 +1,12 @@
 from fastapi import APIRouter
+from back.core.listed_company import StockMapper
 from back.components.kis_api.repository import StockRepository
 from back.cache.cache import RedisCache
 
 router = APIRouter()
 repo = StockRepository()
 cache = RedisCache()
+stock_mapper = StockMapper()
 
 @router.get("/stock")
 async def get_data(start, end, keyword):
@@ -14,7 +16,7 @@ async def get_data(start, end, keyword):
     if cached:
         return {"data": cached}
 
-    item_code = "005930"
+    item_code = await stock_mapper.get_item_code(keyword)
 
     data = await repo.get_stocks(start, end, item_code)
 

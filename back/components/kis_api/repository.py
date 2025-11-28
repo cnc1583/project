@@ -1,6 +1,6 @@
 from datetime import datetime
 import requests
-from back.core.kis_config import KisSettings
+from back.infrastructure.config.kis_config import KisSettings
 from back.components.kis_api.get_token import get_token
 
 class StockRepository:
@@ -13,7 +13,7 @@ class StockRepository:
 
         token = get_token()
 
-        is_domestic = item_code.isdigit()
+        is_domestic = item_code.isdigit() and len(item_code) == 6
 
         headers = {
             "Content-Type": "application/json",
@@ -44,8 +44,6 @@ class StockRepository:
         res.raise_for_status()
         raw = res.json()
         items = raw.get("output2", [])
-
-        print(items)
 
         result = []
         for item in items:

@@ -10,7 +10,7 @@
 
 /* Sidebar */
 .home-sidebar {
-    width: 220px;
+    width: 200px;
     flex-shrink: 0;
     height: 100vh;
     overflow-y: auto;
@@ -83,78 +83,4 @@
     color: #1d1d1f;
 }
 
-.news-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-top: 20px;
-}
-
-.news-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 335px;
-    padding: 32px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-    border: 1px solid #e0e0e5;
-    color: #1d1d1f;
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-    cursor: pointer;
-    position: relative;
-    flex: 1 1 335px;
-}
-
-.news-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.18);
-    border-color: #c0c0c8;
-}
-
-.news-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.news-card-date {
-    font-size: 12px;
-    color: #6e6e73;
-    margin-bottom: 12px;
-}
-
-.news-card-content-wrapper {
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    max-height: 3em; /* 기본 높이, 약 2줄 정도 */
-}
-
-.news-card-content-wrapper.expanded {
-    max-height: 6em; /* 충분히 큰 값으로 확장 */
-}
-
-.news-card-content {
-    font-size: 14px;
-    color: #1d1d1f;
-    line-height: 1.4;
-    margin: 0;
-}
-
-.news-card-toggle {
-    font-size: 12px;
-    color: #0071e3;
-    font-weight: 500;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-}
-
-.news-card-footer {
-    margin-top: 8px;
-    display: flex;
-    justify-content: flex-start;
-}
+/* 버튼 및 input hover 효과는 각 컴포넌트 CSS에 이미 적용 */

@@ -1,6 +1,6 @@
 import json
 import redis.asyncio as aioredis
-from back.core.redis_config import RedisSettings
+from back.infrastructure.config.redis_config import RedisSettings
 
 redis_settings = RedisSettings()
 

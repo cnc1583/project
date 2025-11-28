@@ -1,6 +1,6 @@
 import aiohttp
 import json
-from back.core.naver_config import NaverSettings
+from back.infrastructure.config.naver_config import NaverSettings
 
 class TrendRepository:
     naver_settings = NaverSettings()

@@ -5,7 +5,6 @@ import NEWS_DATA from "../components/News";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 import "./HomePage.css"
-import {useState, useRef} from "react";
 
 export default function HomePage({
     selectedKeyword,
@@ -49,14 +48,16 @@ export default function HomePage({
                     (
                     <div className="news-section">
                         <h2>관련 뉴스</h2>
-                            <div className="news-cards">
-                                {NEWS_DATA.filter(n =>
-                                    n.date >= startDate &&
-                                    n.date <= endDate &&
-                                    n.subject === graphType).map((n, idx) => (
-                                        <NewsCard key={idx} news={n}/>
-                                ))}
-                            </div>
+                        <ul>
+                            {NEWS_DATA.filter(n =>
+                                n.date >= startDate &&
+                                n.date <= endDate &&
+                                n.subject === graphType).map((n, idx) => (
+                                    <li key={idx}>
+                                        <a href={n.url} target="_blank" rel="noreferrer">{n.title}</a>
+                                    </li>
+                            ))}
+                        </ul>
                     </div>
                     )
                     : warning ? <p>{warning}</p> :
@@ -66,43 +67,4 @@ export default function HomePage({
             </div>
         </div>
     );
-}
-
-function NewsCard({news}) {
-    const [expanded, setExpanded] = useState(false);
-    const contentRef = useRef(null);
-    const previewLength = expanded ? 120 : 60;
-    const isOverflow = news.content.length > previewLength;
-    const displayText = news.content.slice(0, previewLength) + (isOverflow ? "..." : "")
-
-    const toggleExpand = (e) => {
-        e.stopPropagation();
-        setExpanded(!expanded);
-    }
-
-    const handleCardClick = () => {
-        window.open(news.url, "_blank");
-    }
-
-    return (
-        <div className="news-card" onClick={handleCardClick}>
-            <h3 className="news-card-title">{news.title}</h3>
-            <p className="news-card-date">{news.date}</p>
-
-            <div className={`news-card-content-wrapper ${expanded ? "expanded" : ""}`}
-                 ref={contentRef}
-            >
-                <p className="news-card-content">
-                    {displayText}
-                </p>
-            </div>
-            {news.content.length > 60 && (
-                <div className="news-card-footer">
-                    <button className="news-card-toggle" onClick={toggleExpand}>{
-                        expanded ? "접기 ▲" : "더보기 ▼"}
-                    </button>
-                </div>
-            )}
-        </div>
-    )
 }

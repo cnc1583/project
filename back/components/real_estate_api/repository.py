@@ -1,5 +1,5 @@
 import aiohttp
-from back.core.real_estate_config import RealEstateSettings
+from back.infrastructure.config.real_estate_config import RealEstateSettings
 
 class RealEstateRepository:
     def __init__(self):
