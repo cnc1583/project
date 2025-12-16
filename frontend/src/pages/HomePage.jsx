@@ -1,10 +1,16 @@
 import Date from "../components/Date.jsx";
 import Graph from "../components/Graph.jsx";
 import Dashboard from "../components/Dashboard";
-import NEWS_DATA from "../components/News";
 import LoadingSpinner from "../components/LoadingSpinner";
-
+import {useEffect, useState} from "react";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import "./HomePage.css"
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
 
 export default function HomePage({
     selectedKeyword,
@@ -18,8 +24,34 @@ export default function HomePage({
     handle_dates_change,
     handleSubjectToggle,
     handleNewsToggle,
-    loading
+    loading,
+    stockTopicData,
+    selectedClusterId,
+    setSelectedClusterId
 }) {
+    const [topicNews, setTopicNews] = useState([]);
+
+    useEffect(() => {
+        if(!selectedKeyword) return;
+
+        const fetchNews = async() => {
+            try {
+                const newsUrl = `http://127.0.0.1:8000/news/${selectedClusterId}`;
+                const res = await fetch(newsUrl);
+
+                if(!res.ok) throw new Error("News Error");
+
+                const json = await res.json();
+                setTopicNews(json.data);
+                console.log(json.data);
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        fetchNews();
+    }, [selectedKeyword, selectedClusterId]);
 
     return (
         <div>
@@ -33,6 +65,8 @@ export default function HomePage({
                         newsType={newsType}
                         handleSubjectToggle={handleSubjectToggle}
                         handleNewsToggle={handleNewsToggle}
+                        stockTopicData={stockTopicData}
+                        onTopicSelect={setSelectedClusterId}
                     />
                 </div>
 
@@ -43,25 +77,25 @@ export default function HomePage({
                     </div>
 
                     {loading ? (
-                        <LoadingSpinner height={graphType === "stock" ? 660 : 660}/>
+                        <LoadingSpinner height={660}/>
                     ) : newsType === "news" ?
                     (
                     <div className="news-section">
-                        <h2>관련 뉴스</h2>
+                        <h2>{selectedKeyword}</h2>
                         <ul>
-                            {NEWS_DATA.filter(n =>
-                                n.date >= startDate &&
-                                n.date <= endDate &&
-                                n.subject === graphType).map((n, idx) => (
-                                    <li key={idx}>
-                                        <a href={n.url} target="_blank" rel="noreferrer">{n.title}</a>
+                            {topicNews.map((n, idx) => (
+                                    <li key={idx} className="news-card">
+                                        <div className="date">{n.article_date}</div>
+                                        <h3>{n.title}</h3>
+                                        <p>{n.content}</p>
+                                        <a href={n.url} target="_blank" rel="noreferrer">Read more</a>
                                     </li>
                             ))}
                         </ul>
                     </div>
                     )
                     : warning ? <p>{warning}</p> :
-                    (<Graph data={data} graphType={graphType} />)
+                    (<Graph data={data} graphType={graphType} selectedKeyword={selectedKeyword} />)
                     }
                 </div>
             </div>

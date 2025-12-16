@@ -44,12 +44,18 @@ class StockRepository:
         res.raise_for_status()
         raw = res.json()
         items = raw.get("output2", [])
+        tmp = raw.get("output1", [])
+        print(items)
 
         result = []
+        ovrs_prev_price = int(0)
         for item in items:
             date_raw = item.get("stck_bsop_date")
             price_raw = item.get("stck_clpr" if is_domestic else "ovrs_nmix_oprc")
-            sign_raw = item.get("prdy_vrss_sign")
+            if not is_domestic:
+                ovrs_sign = 5 if float(price_raw) > ovrs_prev_price else 2
+                ovrs_prev_price = float(price_raw)
+            sign_raw = item.get("prdy_vrss_sign") if is_domestic else ovrs_sign
             vol_raw = item.get("acml_vol")
             hgpr_raw = item.get(hgpr)
             lwpr_raw = item.get(lwpr)

@@ -7,12 +7,14 @@ import HomePage from "./pages/HomePage";
 function App() {
     const [selectedKeyword, setSelectedKeyword] = useState("");
     const [data, setData] = useState([]);
+    const [stockTopicData, setStockTopicData] = useState([]);
     const [warning, setWarning] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [graphType, setGraphType] = useState("stock")
-    const [newsType, setNewsType] = useState("graph")
+    const [graphType, setGraphType] = useState("stock");
+    const [newsType, setNewsType] = useState("graph");
     const [loading, setLoading] = useState(false);
+    const [selectedClusterId, setSelectedClusterId] = useState(null);
 
     const handle_dates_change = async ({ start_date, end_date }) => {
         if (!(start_date && end_date)) return;
@@ -45,21 +47,52 @@ function App() {
     }
 
     useEffect(() => {
+        if(!startDate || !endDate) return;
+
+        const fetchTopics = async() => {
+            try {
+                const topicUrl = `http://127.0.0.1:8000/articles?start=${startDate}&end=${endDate}`;
+                const res = await fetch(topicUrl);
+
+                if(!res.ok) throw new Error("Topic Error");
+
+                const topicJson = await res.json();
+                const stockTopics = topicJson.stock.slice(0, 10);
+
+                setStockTopicData(stockTopics);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchTopics();
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        if(graphType === "stock" && stockTopicData.length > 0) {
+            setSelectedKeyword(stockTopicData[0].representative_keyword);
+            setSelectedClusterId(stockTopicData[0].cluster_id)
+        }
+    }, [stockTopicData, graphType]);
+
+    useEffect(() => {
         if (!selectedKeyword || !startDate || !endDate) return;
 
         const fetchAll = async() => {
             try {
                 setLoading(true);
+                console.log(selectedKeyword)
 
-                const trendUrl = `http://127.0.0.1:8000/trend?start=${startDate}&end=${endDate}&keyword=${encodeURIComponent(selectedKeyword)}`
-                let priceUrl = ""
-
-                if (graphType === "stock") priceUrl = `http://127.0.0.1:8000/stock?start=${startDate}&end=${endDate}&keyword=${encodeURIComponent(selectedKeyword)}`
-                else priceUrl = `http://127.0.0.1:8000/apartment-trades?start_ym=${startDate.slice(0,7)}&end_ym=${endDate.slice(0,7)}&start_day=${startDate.slice(7,10)}&end_day=${endDate.slice(7,10)}`
+                const trendUrl = `http://127.0.0.1:8000/trend?start=${startDate}&end=${endDate}&keyword=${encodeURIComponent(selectedKeyword)}`;
+                const matchedTopic = stockTopicData.find(
+                    t => t.representative_keyword === selectedKeyword
+                );
+                const item_code = matchedTopic?.item_code || "";
+                const priceUrl = `http://127.0.0.1:8000/stock?start=${startDate}&end=${endDate}&item_code=${item_code}`;
 
                 const [trendRes, priceRes] = await Promise.all([
                     fetch(trendUrl),
-                    fetch(priceUrl)
+                    fetch(priceUrl),
                 ])
 
                 if (!trendRes.ok || !priceRes.ok) {
@@ -70,10 +103,9 @@ function App() {
                 const priceJson = await priceRes.json();
 
                 const trendData = trendJson.data;
-                const stockData = priceJson.data ? priceJson.data : priceJson;
+                const stockData = priceJson.data;
 
                 const mergedData = mergeWith(trendData, stockData);
-
                 setData(mergedData);
 
             } catch (err) {
@@ -85,7 +117,7 @@ function App() {
         };
 
         fetchAll();
-    }, [selectedKeyword, startDate, endDate, graphType]);
+    }, [selectedKeyword, startDate, endDate, graphType, stockTopicData]);
 
     return (
         <div>
@@ -106,6 +138,9 @@ function App() {
                             handleSubjectToggle={handleSubjectToggle}
                             handleNewsToggle={handleNewsToggle}
                             loading={loading}
+                            stockTopicData={stockTopicData}
+                            selectedClusterId={selectedClusterId}
+                            setSelectedClusterId={setSelectedClusterId}
                         />
                     }
                 />

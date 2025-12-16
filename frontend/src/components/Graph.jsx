@@ -1,37 +1,28 @@
-import {ResponsiveContainer, Bar, XAxis, YAxis, Tooltip, Legend, BarChart, Cell, CartesianGrid, Line} from 'recharts';
+import {ResponsiveContainer, Bar, XAxis, YAxis, Tooltip, Legend, BarChart, Cell, CartesianGrid} from 'recharts';
 
-function Graph({ data, graphType }) {
+function Graph({ data, graphType, selectedKeyword }) {
     if(!data || data.length === 0) {
         return <p>No Data</p>;
     }
-
-    console.log(data);
 
     let isStock = graphType === "stock";
 
     return (
         <div className="graph">
-            <h2>Graph</h2>
+            <h2>{selectedKeyword}</h2>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data} syncId="synced">
                     <CartesianGrid strokeDasharray="2 2"/>
                     <XAxis dataKey="date"/>
-
-                    {isStock ? (
-                         <YAxis domain={[
+                    <YAxis domain={[
                         (dataMin) => dataMin * 0.95,
-                        (dataMax) => dataMax * 1.05]}/>
-                    ) : (
-                        <YAxis domain={[
-                            'dataMin', 'dataMax'
-                        ]}/>
-                    )}
+                        (dataMax) => dataMax * 1.05]}
+                           tickFormatter={v => Number(v.toFixed(2))}
+                    />
 
                    <Tooltip/>
                     <Legend/>
-
-                    {isStock ? (
-                        <Bar
+                    <Bar
                         dataKey={(data) => {
                             const range = [data.lwpr, data.hgpr]
                             return range
@@ -44,9 +35,6 @@ function Graph({ data, graphType }) {
                             <Cell fill={(data.sign > 3) ? "#006DEE" : "#E94560"}/>
                         ))}
                     </Bar>
-                    ) : (
-                        <Line dataKey="price" name="평당 가격" barSize={20} fill="#E64560"/>
-                    )}
                 </BarChart>
             </ResponsiveContainer>
 

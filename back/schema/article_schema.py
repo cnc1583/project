@@ -1,13 +1,18 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 class ArticleResponse(BaseModel):
-    id: int
-    title: str
-    content: str
-    article_date: str
-    url: str
-    cluster_id: Optional[str] = None
+    cluster_id: str
+    topic: str
+    keywords: str
+    representative_keyword: str | None
+    item_code: Optional[str] = None
+    count: int
 
     class Config:
         from_attributes = True
+
+class ArticleBySubject(BaseModel):
+    stock: List[ArticleResponse]
+    
+

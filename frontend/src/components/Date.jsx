@@ -10,7 +10,9 @@ function Date({ onDateChange }) {
 
     useEffect(() => {
         if (start_date && end_date) {
-            onDateChange({start_date: start_date.toISOString().split("T")[0], end_date: end_date.toISOString().split("T")[0]});
+            const startDateString = formatDate(start_date);
+            const endDateString = formatDate(end_date);
+            onDateChange({start_date: startDateString, end_date: endDateString});
         }
     }, [start_date, end_date, onDateChange]);
 
@@ -48,6 +50,13 @@ function Date({ onDateChange }) {
             </div>
         </div>
     )
+}
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 }
 
 export default Date;

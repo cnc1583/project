@@ -1,4 +1,4 @@
-import aiohttp
+'''import aiohttp
 from back.infrastructure.config.real_estate_config import RealEstateSettings
 
 class RealEstateRepository:
@@ -27,4 +27,4 @@ class RealEstateRepository:
                 data = await resp.json()
 
         items = data["response"]["body"]["items"]
-        return items
+        return items'''

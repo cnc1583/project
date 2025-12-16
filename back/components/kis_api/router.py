@@ -9,17 +9,19 @@ cache = RedisCache()
 stock_mapper = StockMapper()
 
 @router.get("/stock")
-async def get_data(start, end, keyword):
-    key = cache.generate_key("stock", start, end, keyword)
+async def get_data(start, end, item_code):
+    print(item_code)
+    key = cache.generate_key("stock", start, end, item_code)
 
     cached = await cache.get(key)
     if cached:
         return {"data": cached}
 
-    item_code = await stock_mapper.get_item_code(keyword)
-
+    print("Cache miss. Fetching from API...")
+    
     data = await repo.get_stocks(start, end, item_code)
 
+    print(data)
     await cache.set(key, data, expire=900)
 
     return {"data": data}

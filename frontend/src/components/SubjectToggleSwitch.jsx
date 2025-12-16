@@ -1,3 +1,4 @@
+/*
 import React from "react";
 import "./SubjectToggleSwitch.css"
 
@@ -20,3 +21,4 @@ function SubjectToggleSwitch({graphType, onToggle}) {
 }
 
 export default SubjectToggleSwitch;
+*/

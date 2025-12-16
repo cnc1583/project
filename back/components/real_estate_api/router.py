@@ -1,4 +1,4 @@
-import asyncio
+'''import asyncio
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Query
@@ -88,4 +88,4 @@ async def apartment_trades(
 
 
     await cache.set(key, result, expire=3600)
-    return result
+    return result'''

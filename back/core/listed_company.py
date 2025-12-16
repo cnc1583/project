@@ -23,6 +23,7 @@ class StockMapper:
 
         return domestic_dict
 
+    # noinspection PyMethodMayBeStatic
     async def fetch_overseas_stocks(self):
         overseas_dict = {}
 
